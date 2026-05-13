@@ -23,7 +23,6 @@ export default function PlayerFormModal({
   onClose,
   onSaved,
 }: PlayerFormModalProps) {
-  const supabase = createClient();
   const [saving, setSaving] = useState(false);
 
   const [name, setName] = useState(player?.name || "");
@@ -44,6 +43,7 @@ export default function PlayerFormModal({
     if (!name || !position) return;
     setSaving(true);
 
+    const supabase = createClient();
     const payload = {
       team_id: teamId,
       name,

@@ -11,7 +11,6 @@ import QuickAddPlayers from "@/components/QuickAddPlayers";
 const formations = ["4-3-3", "4-4-2", "3-5-2", "4-2-3-1", "5-3-2", "4-1-4-1"];
 
 export default function TeamPage() {
-  const supabase = createClient();
   const [team, setTeam] = useState<Team | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +25,7 @@ export default function TeamPage() {
   const [showQuickAdd, setShowQuickAdd] = useState(false);
 
   const fetchData = useCallback(async () => {
+    const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -50,13 +50,14 @@ export default function TeamPage() {
       setPlayers(playerData || []);
     }
     setLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const saveTeam = async () => {
+    const supabase = createClient();
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -78,6 +79,7 @@ export default function TeamPage() {
   };
 
   const deletePlayer = async (id: string) => {
+    const supabase = createClient();
     await supabase.from("players").delete().eq("id", id);
     setPlayers((prev) => prev.filter((p) => p.id !== id));
   };

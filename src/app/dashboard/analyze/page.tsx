@@ -11,7 +11,6 @@ import { IconSparkles } from "@/components/Icons";
 import Link from "next/link";
 
 export default function AnalyzePage() {
-  const supabase = createClient();
   const [team, setTeam] = useState<Team | null>(null);
   const [playerCount, setPlayerCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -32,6 +31,7 @@ export default function AnalyzePage() {
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const fetchTeam = useCallback(async () => {
+    const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -52,7 +52,7 @@ export default function AnalyzePage() {
       setPlayerCount(count || 0);
     }
     setLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     fetchTeam();

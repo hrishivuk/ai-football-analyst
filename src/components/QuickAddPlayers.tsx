@@ -15,7 +15,6 @@ const positions = [
 ];
 
 export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps) {
-  const supabase = createClient();
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
   const [number, setNumber] = useState("");
@@ -36,6 +35,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
     if (!canSave || saving) return;
     setSaving(true);
 
+    const supabase = createClient();
     await supabase.from("players").insert({
       team_id: teamId,
       name: name.trim(),
