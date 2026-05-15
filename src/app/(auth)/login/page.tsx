@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -17,18 +16,26 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Sign in failed");
+        setLoading(false);
+        return;
+      }
+
       router.push("/dashboard");
       router.refresh();
+    } catch {
+      setError("Network error. Please try again.");
+      setLoading(false);
     }
   };
 
