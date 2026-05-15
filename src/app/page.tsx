@@ -1,6 +1,19 @@
 import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import LandingPage from "@/components/marketing/LandingPage";
 
-/** Avoid Supabase on `/` — middleware handles auth; prevents 500 when env is unset on Vercel. */
-export default function Home() {
-  redirect("/login");
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) redirect("/dashboard");
+  } catch {
+    // Env missing at build — show landing
+  }
+
+  return <LandingPage />;
 }

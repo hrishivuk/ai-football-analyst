@@ -1,65 +1,50 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Team, Player } from "@/types";
-import { IconUsers } from "@/components/Icons";
-import PlayerCard from "@/components/PlayerCard";
+import { useDashboard } from "@/contexts/DashboardContext";
+import PageHeader from "@/components/dashboard/PageHeader";
+import ContentCard from "@/components/dashboard/ContentCard";
+import PlayerDetailPanel from "@/components/dashboard/PlayerDetailPanel";
+import SquadRosterGrid from "@/components/dashboard/SquadRosterGrid";
 import PlayerFormModal from "@/components/PlayerFormModal";
 import QuickAddPlayers from "@/components/QuickAddPlayers";
+import { IconUsers } from "@/components/Icons";
 
 const formations = ["4-3-3", "4-4-2", "3-5-2", "4-2-3-1", "5-3-2", "4-1-4-1"];
 
-export default function TeamPage() {
-  const [team, setTeam] = useState<Team | null>(null);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+function TeamPageContent() {
+  const searchParams = useSearchParams();
+  const selectedId = searchParams.get("player");
+  const { team, players, loading, refresh } = useDashboard();
 
   const [teamName, setTeamName] = useState("");
   const [teamFormation, setTeamFormation] = useState("4-3-3");
   const [playStyle, setPlayStyle] = useState("");
-
+  const [saving, setSaving] = useState(false);
   const [showPlayerModal, setShowPlayerModal] = useState(false);
-  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [editingPlayer, setEditingPlayer] = useState(
+    null as import("@/types").Player | null
+  );
   const [showQuickAdd, setShowQuickAdd] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: teams } = await supabase
-      .from("teams")
-      .select("*")
-      .eq("user_id", user.id);
-
-    const t = teams?.[0] || null;
-    setTeam(t);
-    if (t) {
-      setTeamName(t.name);
-      setTeamFormation(t.formation);
-      setPlayStyle(t.play_style || "");
-
-      const { data: playerData } = await supabase
-        .from("players")
-        .select("*")
-        .eq("team_id", t.id)
-        .order("number", { ascending: true });
-
-      setPlayers(playerData || []);
-    }
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (team) {
+      setTeamName(team.name);
+      setTeamFormation(team.formation);
+      setPlayStyle(team.play_style || "");
+    }
+  }, [team]);
+
+  const selectedPlayer = players.find((p) => p.id === selectedId) ?? null;
 
   const saveTeam = async () => {
     const supabase = createClient();
     setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     if (team) {
@@ -68,188 +53,192 @@ export default function TeamPage() {
         .update({ name: teamName, formation: teamFormation, play_style: playStyle })
         .eq("id", team.id);
     } else {
-      const { data } = await supabase
-        .from("teams")
-        .insert({ user_id: user.id, name: teamName, formation: teamFormation, play_style: playStyle })
-        .select()
-        .single();
-      setTeam(data);
+      await supabase.from("teams").insert({
+        user_id: user.id,
+        name: teamName,
+        formation: teamFormation,
+        play_style: playStyle,
+      });
     }
     setSaving(false);
+    await refresh();
   };
 
   const deletePlayer = async (id: string) => {
     const supabase = createClient();
     await supabase.from("players").delete().eq("id", id);
-    setPlayers((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const handlePlayerSaved = () => {
-    setShowPlayerModal(false);
-    setEditingPlayer(null);
-    fetchData();
+    await refresh();
   };
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-10 max-w-5xl">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-surface-raised rounded-xl w-48" />
-          <div className="h-40 bg-surface-raised rounded-2xl" />
+      <div className="w-full animate-pulse space-y-4">
+        <div className="h-10 bg-surface-raised rounded-xl w-64" />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="h-72 content-card" />
+          <div className="h-72 content-card" />
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="p-6 lg:p-10 max-w-5xl">
-      <h1 className="font-(family-name:--font-display) text-3xl font-bold text-white mb-2">
-        {team ? "Manage Team" : "Create Your Team"}
-      </h1>
-      <p className="text-slate-500 mb-8">
-        {team
-          ? "Update your squad details and manage your player roster."
-          : "Set up your team to unlock context-aware AI analysis."}
-      </p>
-
-      {/* Team Settings */}
-      <div className="glass-card rounded-2xl p-6 mb-8">
-        <h2 className="font-(family-name:--font-display) text-base font-bold text-white mb-5 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-            <IconUsers className="w-4 h-4 text-emerald-400" />
-          </div>
-          Team Details
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              Team Name
-            </label>
-            <input
-              type="text"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              placeholder="e.g. FC Barcelona"
-              className="w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              Default Formation
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {formations.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setTeamFormation(f)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all cursor-pointer ${
-                    teamFormation === f
-                      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                      : "bg-surface-raised border-border text-slate-400 hover:border-border-light hover:text-slate-300"
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-5">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-            Play Style
-          </label>
-          <input
-            type="text"
-            value={playStyle}
-            onChange={(e) => setPlayStyle(e.target.value)}
-            placeholder="e.g. Possession-based, high press, tiki-taka"
-            className="w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all"
+  if (selectedPlayer && team) {
+    return (
+      <div className="w-full">
+        <PlayerDetailPanel
+          player={selectedPlayer}
+          onEdit={() => {
+            setEditingPlayer(selectedPlayer);
+            setShowPlayerModal(true);
+          }}
+          onDelete={() => deletePlayer(selectedPlayer.id)}
+        />
+        {showPlayerModal && (
+          <PlayerFormModal
+            teamId={team.id}
+            player={editingPlayer}
+            onClose={() => {
+              setShowPlayerModal(false);
+              setEditingPlayer(null);
+            }}
+            onSaved={() => {
+              setShowPlayerModal(false);
+              setEditingPlayer(null);
+              refresh();
+            }}
           />
-        </div>
-
-        <button
-          onClick={saveTeam}
-          disabled={saving || !teamName}
-          className="px-6 py-2.5 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-emerald-500/20 cursor-pointer text-sm"
-        >
-          {saving ? "Saving..." : team ? "Save Changes" : "Create Team"}
-        </button>
+        )}
       </div>
+    );
+  }
 
-      {/* Players Roster */}
-      {team && (
-        <div>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-(family-name:--font-display) text-xl font-bold text-white">
-              Player Roster ({players.length})
-            </h2>
-            <div className="flex items-center gap-2">
+  return (
+    <div className="w-full flex flex-col gap-6">
+      <PageHeader
+        badge="Squad"
+        title={team ? "Team & roster" : "Create your team"}
+        subtitle={
+          team
+            ? "Update team settings and manage your full squad below."
+            : "Set up your club profile to unlock AI-powered analysis."
+        }
+        actions={
+          team ? (
+            <>
               <button
+                type="button"
                 onClick={() => setShowQuickAdd(!showQuickAdd)}
-                className={`flex items-center gap-2 px-4 py-2.5 font-bold rounded-xl transition-all cursor-pointer text-sm border ${
+                className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all cursor-pointer ${
                   showQuickAdd
-                    ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                    : "border-border text-slate-400 hover:text-white hover:border-border-light"
+                    ? "bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400"
+                    : "border-border text-secondary hover:text-primary"
                 }`}
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                </svg>
-                Quick Add
+                Quick add
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setEditingPlayer(null);
                   setShowPlayerModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer text-sm"
+                className="px-4 py-2 rounded-xl bg-primary text-[var(--content-bg)] text-sm font-semibold hover:opacity-90 cursor-pointer dark:bg-white dark:text-zinc-900"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Add Player
+                Add player
               </button>
+            </>
+          ) : undefined
+        }
+      />
+
+      {showQuickAdd && team && (
+        <QuickAddPlayers
+          teamId={team.id}
+          onDone={() => {
+            setShowQuickAdd(false);
+            refresh();
+          }}
+        />
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full items-start">
+        <ContentCard title="Team details" className="w-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <IconUsers className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <p className="text-sm text-secondary">
+              Used by MatchAI for formation and style recommendations.
+            </p>
+          </div>
+
+          <div className="space-y-4 mb-4">
+            <div>
+              <label className="label-field">Team name</label>
+              <input
+                type="text"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                placeholder="e.g. Manchester City"
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="label-field">Default formation</label>
+              <div className="flex flex-wrap gap-2">
+                {formations.map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setTeamFormation(f)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all cursor-pointer ${
+                      teamFormation === f
+                        ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+                        : "bg-surface-raised border-border text-secondary hover:border-border-light"
+                    }`}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="label-field">Play style</label>
+              <input
+                type="text"
+                value={playStyle}
+                onChange={(e) => setPlayStyle(e.target.value)}
+                placeholder="e.g. Possession-based, high press"
+                className="input-field"
+              />
             </div>
           </div>
 
-          {showQuickAdd && (
-            <QuickAddPlayers
-              teamId={team.id}
-              onDone={() => {
-                setShowQuickAdd(false);
-                fetchData();
-              }}
-            />
-          )}
+          <button
+            type="button"
+            onClick={saveTeam}
+            disabled={saving || !teamName}
+            className="px-6 py-2.5 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-emerald-500/20 cursor-pointer text-sm"
+          >
+            {saving ? "Saving…" : team ? "Save changes" : "Create team"}
+          </button>
+        </ContentCard>
 
-          {players.length === 0 && !showQuickAdd ? (
-            <div className="glass-card rounded-2xl p-10 text-center">
-              <p className="text-slate-500 mb-1">No players yet</p>
-              <p className="text-xs text-slate-600">
-                Add players with their strengths and weaknesses for smarter AI analysis
-              </p>
-            </div>
-          ) : players.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {players.map((player) => (
-                <PlayerCard
-                  key={player.id}
-                  player={player}
-                  onEdit={() => {
-                    setEditingPlayer(player);
-                    setShowPlayerModal(true);
-                  }}
-                  onDelete={() => deletePlayer(player.id)}
-                />
-              ))}
-            </div>
-          ) : null}
-        </div>
-      )}
+        {team ? (
+          <ContentCard title={`Roster (${players.length})`} className="w-full min-h-[320px]">
+            <p className="text-sm text-secondary mb-4">
+              Click a player to view details, or use the sidebar on large screens.
+            </p>
+            <SquadRosterGrid players={players} />
+          </ContentCard>
+        ) : (
+          <ContentCard className="w-full flex items-center justify-center min-h-[320px]">
+            <p className="text-sm text-secondary text-center px-4">
+              Save your team first, then add players here.
+            </p>
+          </ContentCard>
+        )}
+      </div>
 
       {showPlayerModal && team && (
         <PlayerFormModal
@@ -259,9 +248,28 @@ export default function TeamPage() {
             setShowPlayerModal(false);
             setEditingPlayer(null);
           }}
-          onSaved={handlePlayerSaved}
+          onSaved={() => {
+            setShowPlayerModal(false);
+            setEditingPlayer(null);
+            refresh();
+          }}
         />
       )}
     </div>
+  );
+}
+
+export default function TeamPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full animate-pulse grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="h-72 content-card" />
+          <div className="h-72 content-card" />
+        </div>
+      }
+    >
+      <TeamPageContent />
+    </Suspense>
   );
 }

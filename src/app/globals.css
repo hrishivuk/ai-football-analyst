@@ -1,64 +1,155 @@
 @import "tailwindcss";
 
-@theme {
+/* ── Theme tokens (light = default, .dark = dark mode) ── */
+:root {
+  --bg-page: #f0f4f8;
+  --bg-surface: #ffffff;
+  --bg-surface-raised: #f8fafc;
+  --bg-surface-overlay: #ffffff;
+  --border-default: #e2e8f0;
+  --border-light: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-body: #334155;
+  --glass-from: rgba(255, 255, 255, 0.98);
+  --glass-to: #ffffff;
+  --glass-border: rgba(226, 232, 240, 0.95);
+  --glass-inset: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 24px rgba(15, 23, 42, 0.06);
+  --glass-shadow-hover: 0 4px 32px rgba(15, 23, 42, 0.1);
+  --dot-color: rgba(15, 23, 42, 0.06);
+  --page-glow-1: rgba(16, 185, 129, 0.08);
+  --page-glow-2: rgba(245, 158, 11, 0.04);
+  --sidebar-bg: rgba(255, 255, 255, 0.85);
+  --scrollbar-thumb: rgba(148, 163, 184, 0.5);
+  --divider: rgba(226, 232, 240, 0.9);
+  --shimmer: rgba(15, 23, 42, 0.04);
+  --nav-hover: #f1f5f9;
+  --bg-canvas: #dce8e4;
+  --content-bg: #f4f7f5;
+  --rail-bg: #0a0a0a;
+  --panel-bg: #141414;
+}
+
+.dark {
+  --bg-page: #060a13;
+  --bg-surface: #0c1222;
+  --bg-surface-raised: #111a2e;
+  --bg-surface-overlay: #162033;
+  --border-default: #1e2d4a;
+  --border-light: #263a5e;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-body: #cbd5e1;
+  --glass-from: rgba(17, 26, 46, 0.85);
+  --glass-to: rgba(12, 18, 34, 0.95);
+  --glass-border: rgba(30, 45, 74, 0.65);
+  --glass-inset: rgba(255, 255, 255, 0.03);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --glass-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --dot-color: rgba(255, 255, 255, 0.04);
+  --page-glow-1: rgba(16, 185, 129, 0.1);
+  --page-glow-2: rgba(245, 158, 11, 0.05);
+  --sidebar-bg: rgba(12, 18, 34, 0.75);
+  --scrollbar-thumb: rgba(30, 45, 74, 0.7);
+  --divider: rgba(30, 45, 74, 0.85);
+  --shimmer: rgba(255, 255, 255, 0.04);
+  --nav-hover: rgba(17, 26, 46, 0.8);
+  --bg-canvas: #0a0f0d;
+  --content-bg: #0f1412;
+  --rail-bg: #050505;
+  --panel-bg: #111111;
+}
+
+@theme inline {
   --color-pitch: #16a34a;
   --color-pitch-dark: #15803d;
   --color-pitch-line: #ffffff;
   --color-accent: #f59e0b;
   --color-accent-hover: #fbbf24;
-  --color-surface: #0c1222;
-  --color-surface-raised: #111a2e;
-  --color-surface-overlay: #162033;
-  --color-border: #1e2d4a;
-  --color-border-light: #263a5e;
+  --color-background: var(--bg-page);
+  --color-surface: var(--bg-surface);
+  --color-surface-raised: var(--bg-surface-raised);
+  --color-surface-overlay: var(--bg-surface-overlay);
+  --color-border: var(--border-default);
+  --color-border-light: var(--border-light);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-body: var(--text-body);
   --color-emerald-glow: rgba(16, 185, 129, 0.15);
   --color-amber-glow: rgba(245, 158, 11, 0.12);
 }
 
 html {
-  scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
-  @apply text-white antialiased;
-  background-color: #060a13;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.08), transparent),
-    radial-gradient(ellipse 60% 40% at 80% 50%, rgba(245, 158, 11, 0.04), transparent);
+  @apply text-primary antialiased bg-background;
+  min-height: 100%;
+  height: 100%;
+  margin: 0;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Dot grid background for sections */
+/* Gradients only on auth/marketing — dashboard uses app-canvas bg */
+body:has(.app-canvas) {
+  background-image: none;
+  background-color: var(--bg-canvas);
+  overflow: hidden;
+}
+
+/* Dot grid background */
 .dot-grid {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* Glass card effect */
+/* SaaS card */
 .glass-card {
-  background: linear-gradient(135deg, rgba(17, 26, 46, 0.8), rgba(12, 18, 34, 0.9));
-  border: 1px solid rgba(30, 45, 74, 0.6);
+  background: linear-gradient(135deg, var(--glass-from), var(--glass-to));
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(12px);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
-    0 4px 24px rgba(0, 0, 0, 0.3);
+    0 0 0 1px var(--glass-inset) inset,
+    var(--glass-shadow);
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
 }
 
-.glass-card-hover {
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
 .glass-card-hover:hover {
-  border-color: rgba(30, 45, 74, 0.9);
+  border-color: var(--border-light);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 8px 32px rgba(0, 0, 0, 0.4);
+    0 0 0 1px var(--glass-inset) inset,
+    var(--glass-shadow-hover);
 }
 
-/* Pitch gradient */
+/* Form utilities */
+.label-field {
+  @apply block text-xs font-semibold uppercase tracking-wider text-secondary mb-2;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-primary text-sm placeholder:text-muted focus:outline-none focus:border-emerald-500/50 transition-all;
+}
+.input-field:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 0 12px rgba(16, 185, 129, 0.08);
+}
+
+.select-field {
+  @apply w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-primary text-sm focus:outline-none focus:border-emerald-500/50 transition-all appearance-none cursor-pointer;
+}
+.select-field:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 0 12px rgba(16, 185, 129, 0.08);
+}
+
+/* Pitch (unchanged — always green) */
 .pitch-surface {
   background: linear-gradient(180deg, #15803d 0%, #166534 100%);
 }
 
-/* Pitch grass stripes */
 .pitch-stripes {
   background-image: repeating-linear-gradient(
     0deg,
@@ -69,29 +160,25 @@ body {
   );
 }
 
-/* Glow badge */
 .glow-badge {
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.3), 0 0 4px rgba(16, 185, 129, 0.2);
 }
 
-/* Input focus glow */
 .input-glow:focus {
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 0 12px rgba(16, 185, 129, 0.08);
 }
 
-/* Stat card shine */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .shimmer-loading {
-  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.03) 50%, transparent 75%);
+  background: linear-gradient(90deg, transparent 25%, var(--shimmer) 50%, transparent 75%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
 
-/* Player dot glow */
 @keyframes player-pulse {
   0%, 100% { box-shadow: 0 0 6px rgba(16, 185, 129, 0.4), 0 2px 8px rgba(0,0,0,0.3); }
   50% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.6), 0 2px 8px rgba(0,0,0,0.3); }
@@ -101,13 +188,11 @@ body {
   animation: player-pulse 3s ease-in-out infinite;
 }
 
-/* Section divider */
 .section-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(30, 45, 74, 0.8) 50%, transparent);
+  background: linear-gradient(90deg, transparent, var(--divider) 50%, transparent);
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -115,11 +200,162 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(30, 45, 74, 0.6);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
-/* Selection */
 ::selection {
   background: rgba(16, 185, 129, 0.3);
+}
+
+/* ── App shell (reference SaaS layout) ── */
+.app-canvas {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  background: var(--bg-canvas);
+  padding: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .app-canvas {
+    padding: 16px 20px;
+  }
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 24px 80px rgba(0, 0, 0, 0.12);
+}
+
+.dark .app-shell {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.icon-rail {
+  flex: 0 0 72px;
+  align-self: stretch;
+  background: var(--rail-bg);
+}
+
+.panel-sidebar {
+  flex: 0 0 280px;
+  width: 280px;
+  align-self: stretch;
+  background: var(--panel-bg);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.panel-sidebar.hidden {
+  display: none;
+}
+
+/* Main content — explicit flex grow (don't rely on utility alone) */
+.main-panel {
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  background: var(--content-bg);
+  overflow: hidden;
+}
+
+.main-panel-inner {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.content-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.dark .content-card {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.content-inner {
+  width: 100%;
+  max-width: 100%;
+  padding: 1.5rem;
+  padding-bottom: 5rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .content-inner {
+    padding: 2rem 2.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.main-panel-inner.content-inner {
+  padding: 1.5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 1024px) {
+  .main-panel-inner.content-inner {
+    padding: 2rem 2.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.page-content {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+/* Tab bar */
+.tab-bar {
+  display: flex;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--border-default);
+  margin-bottom: 1.5rem;
+}
+
+.tab-bar button,
+.tab-bar a {
+  padding-bottom: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-bar button.active,
+.tab-bar a.active {
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom-color: var(--text-primary);
 }

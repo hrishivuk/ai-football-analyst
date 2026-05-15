@@ -29,7 +29,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Full navigation so Vercel picks up auth cookies from the login response
       window.location.href = "/dashboard";
     } catch {
       setError("Network error. Please try again.");
@@ -38,79 +37,65 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 dot-grid">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/5 rounded-full blur-3xl" />
+    <div className="w-full max-w-md">
+      <div className="text-center mb-8">
+        <h1 className="font-(family-name:--font-display) text-2xl font-bold text-primary">
+          Welcome back
+        </h1>
+        <p className="text-sm text-secondary mt-1">
+          Sign in to your tactical command center
+        </p>
       </div>
 
-      <div className="w-full max-w-md relative">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl pitch-surface flex items-center justify-center shadow-lg shadow-emerald-900/30 mx-auto mb-4">
-            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 2a14.5 14.5 0 000 20 14.5 14.5 0 000-20" />
-              <path d="M2 12h20" />
-            </svg>
-          </div>
-          <h1 className="font-(family-name:--font-display) text-2xl font-bold text-white">
-            Welcome back
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Sign in to your tactical command center
-          </p>
+      <form onSubmit={handleLogin} className="content-card space-y-5">
+        <div>
+          <label className="label-field">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="coach@club.com"
+            required
+            className="input-field"
+          />
         </div>
 
-        <form onSubmit={handleLogin} className="glass-card rounded-2xl p-6 space-y-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="coach@club.com"
-              required
-              className="w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all"
-            />
+        <div>
+          <label className="label-field">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            className="input-field"
+          />
+        </div>
+
+        {error && (
+          <div className="px-4 py-3 bg-red-500/8 border border-red-500/20 rounded-xl text-red-400 text-sm">
+            {error}
           </div>
+        )}
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all"
-            />
-          </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3.5 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-emerald-500/20 cursor-pointer text-sm"
+        >
+          {loading ? "Signing in..." : "Sign in"}
+        </button>
 
-          {error && (
-            <div className="px-4 py-3 bg-red-500/8 border border-red-500/20 rounded-xl text-red-400 text-sm">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-emerald-500/20 cursor-pointer text-sm"
+        <p className="text-center text-sm text-secondary">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/signup"
+            className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 font-medium"
           >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-
-          <p className="text-center text-sm text-slate-500">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-emerald-400 hover:text-emerald-300 font-medium">
-              Sign up
-            </Link>
-          </p>
-        </form>
-      </div>
+            Create account
+          </Link>
+        </p>
+      </form>
     </div>
   );
 }

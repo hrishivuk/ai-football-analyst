@@ -83,8 +83,8 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Quick Add</h3>
-            <p className="text-[11px] text-slate-500">Name, position, number — Enter to save, repeat</p>
+            <h3 className="text-sm font-bold text-primary">Quick Add</h3>
+            <p className="text-[11px] text-secondary">Name, position, number — Enter to save, repeat</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -95,7 +95,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
           )}
           <button
             onClick={onDone}
-            className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white border border-border rounded-xl hover:bg-surface-raised transition-all cursor-pointer"
+            className="px-4 py-2 text-sm font-medium text-secondary hover:text-primary border border-border rounded-xl hover:bg-surface-raised transition-all cursor-pointer"
           >
             Done
           </button>
@@ -106,7 +106,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
       <div className="flex gap-2 items-start">
         {/* Name */}
         <div className="flex-1 min-w-0">
-          <label className="block text-[10px] font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Name</label>
+          <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1.5">Name</label>
           <input
             ref={nameRef}
             type="text"
@@ -114,13 +114,13 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
             onChange={(e) => setName(e.target.value)}
             onKeyDown={handleNameKeyDown}
             placeholder="Player name"
-            className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all"
+            className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-lg text-primary text-sm placeholder:text-muted focus:outline-none focus:border-emerald-500/50 transition-all focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)]"
           />
         </div>
 
         {/* Position */}
         <div className="w-28 relative">
-          <label className="block text-[10px] font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Pos</label>
+          <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1.5">Pos</label>
           <button
             ref={positionRef}
             type="button"
@@ -128,7 +128,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
             className={`w-full px-3 py-2.5 rounded-lg text-sm font-medium border transition-all text-left cursor-pointer ${
               position
                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                : "bg-surface-raised border-border text-slate-500"
+                : "bg-surface-raised border-border text-secondary"
             }`}
           >
             {position || "Select"}
@@ -144,7 +144,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
                   className={`px-2 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                     position === p
                       ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                      : "bg-surface-raised border-border text-slate-400 hover:text-white hover:border-border-light"
+                      : "bg-surface-raised border-border text-secondary hover:text-primary hover:border-border-light"
                   }`}
                 >
                   {p}
@@ -156,7 +156,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
 
         {/* Number */}
         <div className="w-20">
-          <label className="block text-[10px] font-semibold uppercase tracking-wider text-slate-600 mb-1.5">#</label>
+          <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted mb-1.5">#</label>
           <input
             ref={numberRef}
             type="number"
@@ -164,7 +164,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
             onChange={(e) => setNumber(e.target.value)}
             onKeyDown={handleNumberKeyDown}
             placeholder="10"
-            className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all"
+            className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-lg text-primary text-sm placeholder:text-muted focus:outline-none focus:border-emerald-500/50 transition-all focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)]"
           />
         </div>
 
@@ -191,7 +191,7 @@ export default function QuickAddPlayers({ teamId, onDone }: QuickAddPlayersProps
 
       {/* Recently added preview */}
       {addedCount > 0 && (
-        <p className="text-[11px] text-slate-600 mt-3">
+        <p className="text-[11px] text-muted mt-3">
           Press Enter after the shirt number to save and add the next player. Click Done when finished.
         </p>
       )}

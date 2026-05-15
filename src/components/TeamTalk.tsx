@@ -78,16 +78,16 @@ export default function TeamTalk({ input }: TeamTalkProps) {
               <IconMic className="w-5 h-5 text-red-400" />
             </div>
             <div>
-              <h3 className="font-(family-name:--font-display) text-base font-bold text-white">
+              <h3 className="font-(family-name:--font-display) text-base font-bold text-primary">
                 Pre-Match Team Talk
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-secondary">
                 vs {input.opponentName}
               </p>
             </div>
           </div>
 
-          <blockquote className="text-slate-200 leading-[1.8] text-[15px] whitespace-pre-wrap border-l-2 border-red-500/30 pl-5 italic">
+          <blockquote className="text-body leading-[1.8] text-[15px] whitespace-pre-wrap border-l-2 border-red-500/30 pl-5 italic">
             {speech}
             {loading && (
               <span className="inline-block w-0.5 h-5 bg-red-400 ml-0.5 animate-pulse align-middle" />

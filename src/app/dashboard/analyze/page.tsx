@@ -9,6 +9,8 @@ import TeamTalk from "@/components/TeamTalk";
 import { MatchInput, TacticalAnalysis, Team } from "@/types";
 import { IconSparkles } from "@/components/Icons";
 import Link from "next/link";
+import PageHeader from "@/components/dashboard/PageHeader";
+import ContentCard from "@/components/dashboard/ContentCard";
 
 export default function AnalyzePage() {
   const [team, setTeam] = useState<Team | null>(null);
@@ -97,63 +99,62 @@ export default function AnalyzePage() {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-10">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-surface-raised rounded-xl w-64" />
-          <div className="h-60 bg-surface-raised rounded-2xl" />
-        </div>
+      <div className="animate-pulse space-y-4 max-w-3xl">
+        <div className="h-10 bg-surface-raised rounded-xl w-64" />
+        <div className="h-60 content-card" />
       </div>
     );
   }
 
   if (!team) {
     return (
-      <div className="p-6 lg:p-10 max-w-2xl">
-        <div className="glass-card rounded-2xl p-10 text-center">
+      <>
+        <PageHeader
+          badge="Analyze"
+          title="AI match analysis"
+          subtitle="Set up your team before running tactical analysis."
+        />
+        <ContentCard className="max-w-lg text-center py-10">
           <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
-            <IconSparkles className="w-7 h-7 text-amber-400" />
+            <IconSparkles className="w-7 h-7 text-amber-600 dark:text-amber-400" />
           </div>
-          <h2 className="font-(family-name:--font-display) text-xl font-bold text-white mb-2">
-            Create a Team First
+          <h2 className="font-(family-name:--font-display) text-xl font-bold text-primary mb-2">
+            Create a team first
           </h2>
-          <p className="text-slate-500 text-sm mb-6">
-            You need to set up your team and add players before running AI analysis.
-            The AI uses your squad data to give personalized tactical recommendations.
+          <p className="text-secondary text-sm mb-6">
+            Add your squad so AI analysis can use real player data.
           </p>
           <Link
             href="/dashboard/team"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 text-sm"
+            className="inline-flex px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 text-sm"
           >
-            Set Up Team
+            Set up team
           </Link>
-        </div>
-      </div>
+        </ContentCard>
+      </>
     );
   }
 
   return (
-    <div className="p-6 lg:p-10 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="font-(family-name:--font-display) text-3xl font-bold text-white mb-2">
-          AI Match Analysis
-        </h1>
-        <p className="text-slate-500">
-          Analyzing for <span className="text-emerald-400 font-medium">{team.name}</span> ({playerCount} players loaded)
-        </p>
-      </div>
+    <>
+      <PageHeader
+        badge="Analyze"
+        title="AI match analysis"
+        subtitle={`Analyzing for ${team.name} · ${playerCount} players loaded`}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
         <div className="lg:col-span-3">
-          <div className="glass-card rounded-2xl p-6">
+          <ContentCard>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
                 <IconSparkles className="w-4.5 h-4.5 text-emerald-400" />
               </div>
               <div>
-                <h2 className="font-(family-name:--font-display) text-base font-bold text-white">
+                <h2 className="font-(family-name:--font-display) text-base font-bold text-primary">
                   Opposition Intel
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-secondary">
                   Tell us about the opponent — your squad data is already loaded
                 </p>
               </div>
@@ -176,11 +177,11 @@ export default function AnalyzePage() {
                 {error}
               </div>
             )}
-          </div>
+          </ContentCard>
         </div>
 
         <div className="lg:col-span-2">
-          <div className="glass-card rounded-2xl p-6 lg:sticky lg:top-6">
+          <ContentCard className="lg:sticky lg:top-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
@@ -190,7 +191,7 @@ export default function AnalyzePage() {
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                 </div>
-                <h2 className="font-(family-name:--font-display) text-base font-bold text-white">
+                <h2 className="font-(family-name:--font-display) text-base font-bold text-primary">
                   Formation
                 </h2>
               </div>
@@ -203,36 +204,26 @@ export default function AnalyzePage() {
             <TacticalBoard
               formation={analysis?.suggestedFormation || team.formation || "4-3-3"}
             />
-          </div>
+          </ContentCard>
         </div>
       </div>
 
       {analysis && (
         <div ref={resultsRef} className="mt-10">
-          <div className="section-divider mb-10" />
-
-          <div className="flex items-center gap-6 mb-8">
+          <div className="tab-bar">
             <button
+              type="button"
               onClick={() => setActiveTab("analysis")}
-              className={`relative pb-2 text-sm font-semibold transition-colors cursor-pointer ${
-                activeTab === "analysis" ? "text-emerald-400" : "text-slate-500 hover:text-slate-300"
-              }`}
+              className={activeTab === "analysis" ? "active" : ""}
             >
-              Tactical Analysis
-              {activeTab === "analysis" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
-              )}
+              Tactical analysis
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("teamtalk")}
-              className={`relative pb-2 text-sm font-semibold transition-colors cursor-pointer ${
-                activeTab === "teamtalk" ? "text-emerald-400" : "text-slate-500 hover:text-slate-300"
-              }`}
+              className={activeTab === "teamtalk" ? "active" : ""}
             >
-              Pre-Match Team Talk
-              {activeTab === "teamtalk" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
-              )}
+              Pre-match team talk
             </button>
           </div>
 
@@ -243,6 +234,6 @@ export default function AnalyzePage() {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

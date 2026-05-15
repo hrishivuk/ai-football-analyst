@@ -46,11 +46,11 @@ export default function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
             <IconPlay className="w-4 h-4 text-emerald-400" />
           </div>
-          <h3 className="font-(family-name:--font-display) text-sm font-bold text-white uppercase tracking-wider">
+          <h3 className="font-(family-name:--font-display) text-sm font-bold text-primary uppercase tracking-wider">
             Gameplan
           </h3>
         </div>
-        <p className="text-slate-300 leading-relaxed text-[15px]">
+        <p className="text-body leading-relaxed text-[15px]">
           {analysis.gameplan}
         </p>
       </div>
@@ -62,13 +62,13 @@ export default function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
             <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
               <IconAlertTriangle className="w-4 h-4 text-red-400" />
             </div>
-            <h3 className="font-(family-name:--font-display) text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="font-(family-name:--font-display) text-sm font-bold text-primary uppercase tracking-wider">
               Key Danger Areas
             </h3>
           </div>
           <ul className="space-y-3">
             {analysis.keyDangerAreas.map((area, i) => (
-              <li key={i} className="flex items-start gap-3 text-slate-300 text-[15px]">
+              <li key={i} className="flex items-start gap-3 text-body text-[15px]">
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
                 {area}
               </li>
@@ -81,13 +81,13 @@ export default function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
               <IconRefresh className="w-4 h-4 text-blue-400" />
             </div>
-            <h3 className="font-(family-name:--font-display) text-sm font-bold text-white uppercase tracking-wider">
+            <h3 className="font-(family-name:--font-display) text-sm font-bold text-primary uppercase tracking-wider">
               Substitution Strategy
             </h3>
           </div>
           <ul className="space-y-3">
             {analysis.substitutionStrategy.map((sub, i) => (
-              <li key={i} className="flex items-start gap-3 text-slate-300 text-[15px]">
+              <li key={i} className="flex items-start gap-3 text-body text-[15px]">
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
                 {sub}
               </li>
@@ -102,11 +102,11 @@ export default function AnalysisDisplay({ analysis }: AnalysisDisplayProps) {
           <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
             <IconCornerKick className="w-4 h-4 text-amber-400" />
           </div>
-          <h3 className="font-(family-name:--font-display) text-sm font-bold text-white uppercase tracking-wider">
+          <h3 className="font-(family-name:--font-display) text-sm font-bold text-primary uppercase tracking-wider">
             Set Pieces
           </h3>
         </div>
-        <p className="text-slate-300 leading-relaxed text-[15px]">
+        <p className="text-body leading-relaxed text-[15px]">
           {analysis.setPieces}
         </p>
       </div>
@@ -154,7 +154,7 @@ function StatCard({
         <div className={`w-8 h-8 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center ${c.text}`}>
           {icon}
         </div>
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <span className="text-xs font-semibold uppercase tracking-wider text-secondary">
           {label}
         </span>
       </div>

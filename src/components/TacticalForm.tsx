@@ -21,11 +21,11 @@ const weatherOptions = [
 ];
 
 const inputClass =
-  "w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all";
+  "input-field";
 const labelClass =
-  "block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2";
+  "label-field";
 const selectClass =
-  "w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500/50 input-glow transition-all appearance-none cursor-pointer";
+  "select-field";
 
 export default function TacticalForm({
   input,
@@ -65,7 +65,7 @@ export default function TacticalForm({
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
-            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </div>
@@ -91,7 +91,7 @@ export default function TacticalForm({
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-secondary">
           <span className="text-emerald-400 font-semibold">Your team data is loaded.</span>{" "}
           Player strengths, weaknesses, and fitness status will be included automatically in the AI analysis.
         </p>
@@ -109,7 +109,7 @@ export default function TacticalForm({
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
                 input.matchType === t
                   ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                  : "bg-surface-raised border-border text-slate-400 hover:border-border-light hover:text-slate-300"
+                  : "bg-surface-raised border-border text-secondary hover:border-border-light hover:text-body"
               }`}
             >
               {t}
@@ -131,7 +131,7 @@ export default function TacticalForm({
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all flex items-center gap-1.5 ${
                 input.weather === w.label
                   ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                  : "bg-surface-raised border-border text-slate-400 hover:border-border-light hover:text-slate-300"
+                  : "bg-surface-raised border-border text-secondary hover:border-border-light hover:text-body"
               }`}
             >
               <span className="text-base leading-none">{w.icon}</span>

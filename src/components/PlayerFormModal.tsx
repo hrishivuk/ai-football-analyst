@@ -35,9 +35,9 @@ export default function PlayerFormModal({
   const [age, setAge] = useState<string>(player?.age?.toString() || "");
 
   const inputClass =
-    "w-full px-4 py-3 bg-surface-raised border border-border rounded-xl text-white text-sm placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 input-glow transition-all";
+    "input-field";
   const labelClass =
-    "block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2";
+    "label-field";
 
   const handleSave = async () => {
     if (!name || !position) return;
@@ -72,12 +72,12 @@ export default function PlayerFormModal({
 
       <div className="glass-card rounded-2xl p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-(family-name:--font-display) text-lg font-bold text-white">
+          <h2 className="font-(family-name:--font-display) text-lg font-bold text-primary">
             {player ? "Edit Player" : "Add Player"}
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-surface-raised border border-border flex items-center justify-center text-slate-500 hover:text-white transition-all cursor-pointer"
+            className="w-8 h-8 rounded-lg bg-surface-raised border border-border flex items-center justify-center text-secondary hover:text-primary transition-all cursor-pointer"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -121,7 +121,7 @@ export default function PlayerFormModal({
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
                     position === p
                       ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                      : "bg-surface-raised border-border text-slate-400 hover:text-slate-300"
+                      : "bg-surface-raised border-border text-secondary hover:text-body"
                   }`}
                 >
                   {p}
@@ -152,7 +152,7 @@ export default function PlayerFormModal({
                     className={`flex-1 py-2.5 rounded-lg text-xs font-medium border transition-all cursor-pointer capitalize ${
                       preferredFoot === f
                         ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400"
-                        : "bg-surface-raised border-border text-slate-400"
+                        : "bg-surface-raised border-border text-secondary"
                     }`}
                   >
                     {f}
@@ -177,7 +177,7 @@ export default function PlayerFormModal({
                           : s === "injured"
                           ? "bg-red-500/15 border-red-500/40 text-red-400"
                           : "bg-purple-500/15 border-purple-500/40 text-purple-400"
-                        : "bg-surface-raised border-border text-slate-400"
+                        : "bg-surface-raised border-border text-secondary"
                     }`}
                   >
                     {s}
@@ -212,7 +212,7 @@ export default function PlayerFormModal({
           <div className="flex gap-3 pt-2">
             <button
               onClick={onClose}
-              className="flex-1 py-3 border border-border rounded-xl text-slate-400 font-medium text-sm hover:bg-surface-raised transition-all cursor-pointer"
+              className="flex-1 py-3 border border-border rounded-xl text-secondary font-medium text-sm hover:bg-surface-raised transition-all cursor-pointer"
             >
               Cancel
             </button>

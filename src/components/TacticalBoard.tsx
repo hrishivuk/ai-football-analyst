@@ -72,7 +72,7 @@ export default function TacticalBoard({ formation }: TacticalBoardProps) {
 
       {/* Formation badge */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/10">
-        <span className="text-[11px] font-bold text-white tracking-wider">{formation}</span>
+        <span className="text-[11px] font-bold text-primary tracking-wider">{formation}</span>
       </div>
 
       {/* Subtle vignette */}
