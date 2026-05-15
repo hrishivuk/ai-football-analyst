@@ -3,7 +3,13 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch {
+    redirect("/login");
+  }
+
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
