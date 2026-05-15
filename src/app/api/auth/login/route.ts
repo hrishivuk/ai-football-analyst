@@ -1,7 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import {
+  createRouteHandlerClient,
+  jsonWithAuthCookies,
+} from "@/lib/supabase/route-handler";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export const runtime = "nodejs";
+
+export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
@@ -12,7 +17,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = await createClient();
+    const { supabase, pendingCookies } = createRouteHandlerClient(request);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -22,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
-    return NextResponse.json({ success: true });
+    return jsonWithAuthCookies({ success: true }, 200, pendingCookies());
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "Authentication failed";
